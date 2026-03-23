@@ -1,0 +1,19 @@
+# Multi-Layered Security System Requirements
+
+# Core Scientific Libraries
+numpy>=1.24.0
+matplotlib>=3.7.0
+Pillow>=10.0.0
+
+# Quantum Computing
+qiskit>=1.0.0
+qiskit-aer>=0.13.0
+
+# Cryptography
+pycryptodome>=3.19.0
+
+# Deep Learning
+torch>=2.0.0
+
+# Utilities
+tqdm>=4.65.0

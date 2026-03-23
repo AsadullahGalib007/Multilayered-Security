@@ -1,0 +1,37 @@
+# Conda Environment Configuration for Multi-Layered Security System
+# Usage: conda env create -f environment.yml
+
+name: quantum-security
+channels:
+  - pytorch
+  - nvidia
+  - conda-forge
+  - defaults
+
+dependencies:
+  - python=3.10
+  - pip>=23.0
+
+  - numpy>=1.24.0
+  - scipy>=1.11.0
+  - matplotlib>=3.7.0
+
+  - pillow>=10.0.0
+  - opencv>=4.8.0
+
+  # 🔥 Correct GPU Install
+  - pytorch
+  - torchvision
+  - torchaudio
+  - pytorch-cuda=12.1
+
+  - jupyter
+  - ipykernel
+  - tqdm>=4.65.0
+
+  - pip:
+      - qiskit>=1.0.0
+      - qiskit-aer>=0.13.0
+      - pycryptodome>=3.19.0
+      - qiskit-ibm-runtime>=0.15.0
+
