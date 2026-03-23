@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 # Multi-Layered Security System
 
 Implementation of the research paper:  
@@ -376,3 +377,6 @@ For questions or issues with this implementation, please open an issue on the re
 ---
 
 **Note**: This is an educational implementation demonstrating the concepts from the research paper. For production use, additional security measures and optimizations would be required.
+=======
+# Multilayered-Security
+>>>>>>> 0760e3b0a73a9c15326b8eb554d7c226d6051c1d
