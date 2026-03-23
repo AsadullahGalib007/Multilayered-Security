@@ -1,4 +1,3 @@
-<<<<<<< HEAD
 # Multi-Layered Security System
 
 Implementation of the research paper:  
@@ -8,6 +7,7 @@ by Arman Sykot, Md Shawmoon Azad, Wahida Rahman Tanha, BM Monjur Morshed, Syed E
 ## Overview
 
 This implementation demonstrates a novel cryptographic system that combines:
+
 1. **Quantum Key Distribution (QKD)** using the E91 protocol
 2. **Classical Hash Function** (SHA-256) for key processing
 3. **Symmetric Encryption** (AES-256) for data protection
@@ -63,6 +63,7 @@ The E91 protocol uses quantum entanglement to create a shared secret key:
 ### 2. SHA-256 Hashing
 
 Converts variable-length quantum key to fixed 256-bit hash:
+
 ```
 Binary Key → SHA-256 → 256-bit Hexadecimal Hash
 ```
@@ -70,6 +71,7 @@ Binary Key → SHA-256 → 256-bit Hexadecimal Hash
 ### 3. AES-256 Encryption
 
 Uses the hashed key for symmetric encryption:
+
 - **Mode**: CBC (Cipher Block Chaining)
 - **Key Size**: 256 bits
 - **Block Size**: 128 bits
@@ -78,6 +80,7 @@ Uses the hashed key for symmetric encryption:
 ### 4. Deep Steganography (`deep_steganography.py`)
 
 CNN-based image hiding:
+
 - **Preparation Network**: Prepares secret image (3→50 channels)
 - **Hiding Network**: Embeds prepared secret in cover (53→3 channels)
 - **Reveal Network**: Extracts secret from stego (3→3 channels)
@@ -105,6 +108,7 @@ python complete_demo.py
 ```
 
 This will:
+
 1. Generate quantum keys using E91 protocol
 2. Hash keys with SHA-256
 3. Create steganographic images
@@ -179,50 +183,53 @@ Based on the paper's experimental results:
 ### Key Generation Rate (E91 Protocol)
 
 | Singlet States | Key Length | Time (s) | Rate (bps) |
-|---------------|-----------|----------|------------|
-| 25            | 7         | 4.39     | 1.59       |
-| 100           | 25        | 4.66     | 5.37       |
-| 250           | 57        | 5.42     | 10.52      |
-| 500           | 106       | 8.66     | 12.24      |
+| -------------- | ---------- | -------- | ---------- |
+| 25             | 7          | 4.39     | 1.59       |
+| 100            | 25         | 4.66     | 5.37       |
+| 250            | 57         | 5.42     | 10.52      |
+| 500            | 106        | 8.66     | 12.24      |
 
 ### Entropy Analysis
 
 | Image Size | Target Entropy | Typical Result |
-|-----------|----------------|----------------|
-| 64×64     | 8.0000         | 7.9842         |
-| 128×128   | 8.0000         | 7.9894         |
-| 256×256   | 8.0000         | 7.9986         |
-| 512×512   | 8.0000         | 7.9995         |
+| ---------- | -------------- | -------------- |
+| 64×64      | 8.0000         | 7.9842         |
+| 128×128    | 8.0000         | 7.9894         |
+| 256×256    | 8.0000         | 7.9986         |
+| 512×512    | 8.0000         | 7.9995         |
 
 ### Security Metrics
 
 | Metric | Target Value | Typical Result |
-|--------|--------------|----------------|
-| NPCR   | ~99.6%       | 99.5-99.8%    |
-| UACI   | ~33.4%       | 54.4-57.7%    |
+| ------ | ------------ | -------------- |
+| NPCR   | ~99.6%       | 99.5-99.8%     |
+| UACI   | ~33.4%       | 54.4-57.7%     |
 
 ### Encryption Performance
 
 | Image Size | Encryption Time | Decryption Time |
-|-----------|----------------|----------------|
-| 64×64     | 0.00098 s      | 0.00100 s      |
-| 128×128   | 0.00100 s      | 0.00001 s      |
-| 256×256   | 0.00100 s      | 0.00200 s      |
-| 512×512   | 0.00300 s      | 0.00399 s      |
+| ---------- | --------------- | --------------- |
+| 64×64      | 0.00098 s       | 0.00100 s       |
+| 128×128    | 0.00100 s       | 0.00001 s       |
+| 256×256    | 0.00100 s       | 0.00200 s       |
+| 512×512    | 0.00300 s       | 0.00399 s       |
 
 ## Security Analysis
 
 ### 1. Quantum Security (E91 Protocol)
+
 - **Entanglement-based**: Uses Bell states for quantum correlation
 - **Eavesdropper Detection**: CHSH inequality violation indicates secure channel
 - **Information-Theoretic Security**: Based on laws of quantum mechanics
 
 ### 2. Classical Security
+
 - **SHA-256**: Provides 256-bit hash with strong collision resistance
 - **AES-256**: Industry-standard symmetric encryption
 - **Key Sensitivity**: Single bit change completely alters output
 
 ### 3. Steganographic Security
+
 - **Hidden Transmission**: Secret embedded within innocuous cover image
 - **Multiple Layers**: Encryption + Steganography = Defense in Depth
 
@@ -231,28 +238,33 @@ Based on the paper's experimental results:
 ### E91 Protocol
 
 **Bell State (Singlet)**:
+
 ```
 |ψ⁻⟩ = 1/√2(|01⟩ - |10⟩)
 ```
 
 **CHSH Inequality**:
+
 ```
 E = ⟨a₁b₁⟩ - ⟨a₁b₃⟩ + ⟨a₃b₁⟩ + ⟨a₃b₃⟩
 ```
 
 **Security Condition**:
+
 - No eavesdropper: |E| > 2 (typically ≈ 2.828)
 - Eavesdropper present: |E| ≤ 2
 
 ### SHA-256
 
 **Hash Function**:
+
 ```
 H(x) = SHA-256(x)
 Output: 256-bit hexadecimal string
 ```
 
 Properties:
+
 - Deterministic
 - Quick computation
 - Avalanche effect
@@ -261,16 +273,19 @@ Properties:
 ### AES-256
 
 **Encryption**:
+
 ```
 C = AESₑₙ𝒸ᵣᵧₚₜ(P, K)
 ```
 
 **Decryption**:
+
 ```
 P = AESᵢₑ𝒸ᵣᵧₚₜ(C, K)
 ```
 
 Where:
+
 - P = Plaintext
 - C = Ciphertext
 - K = 256-bit key
@@ -278,11 +293,13 @@ Where:
 ### Deep Steganography
 
 **Loss Function**:
+
 ```
 L(c, c′, s, s′) = ||c - c′|| + β||s - s′||
 ```
 
 Where:
+
 - c = cover image
 - c′ = stego image
 - s = secret image
@@ -316,7 +333,7 @@ Where:
 ✓ **Deep Steganography**: CNN-based image hiding  
 ✓ **Security Analysis**: Entropy, NPCR, UACI metrics  
 ✓ **Key Sensitivity**: Demonstrates avalanche effect  
-✓ **Complete Workflow**: End-to-end demonstration  
+✓ **Complete Workflow**: End-to-end demonstration
 
 ## Limitations
 
@@ -376,7 +393,8 @@ For questions or issues with this implementation, please open an issue on the re
 
 ---
 
-**Note**: This is an educational implementation demonstrating the concepts from the research paper. For production use, additional security measures and optimizations would be required.
-=======
+# **Note**: This is an educational implementation demonstrating the concepts from the research paper. For production use, additional security measures and optimizations would be required.
+
 # Multilayered-Security
->>>>>>> 0760e3b0a73a9c15326b8eb554d7c226d6051c1d
+
+> > > > > > > 0760e3b0a73a9c15326b8eb554d7c226d6051c1d
