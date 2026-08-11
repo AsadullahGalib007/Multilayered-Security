@@ -59,13 +59,13 @@ class E91QKD:
         qr = QuantumRegister(2, 'q')
         cr = ClassicalRegister(2, 'c')
         circuit = QuantumCircuit(qr, cr)
-        
+
         # Create singlet state: |ψ⟩ = 1/√2(|01⟩ - |10⟩)
-        circuit.x(qr[0])  # Flip first qubit to |1⟩
+        circuit.x(qr[0])  # Flip both qubits to |11⟩ so the Bell pair comes out
+        circuit.x(qr[1])  # anti-correlated (|01⟩-|10⟩) rather than correlated
         circuit.h(qr[0])  # Create superposition
         circuit.cx(qr[0], qr[1])  # Entangle
-        circuit.z(qr[0])  # Phase flip to create singlet
-        
+
         return circuit
     
     def measure_in_basis(self, circuit, qubit_idx, angle):
@@ -77,8 +77,10 @@ class E91QKD:
             qubit_idx: Index of qubit to measure
             angle: Rotation angle for measurement basis
         """
-        # Rotate to measurement basis
-        circuit.ry(-2*angle, qubit_idx)
+        # Rotate to measurement basis. The angles in alice_bases/bob_bases are
+        # already the physical measurement-axis angles, so rotate by -angle
+        # (a -2*angle rotation would double every basis).
+        circuit.ry(-angle, qubit_idx)
         circuit.measure(qubit_idx, qubit_idx)
         
     def run_protocol(self):
@@ -123,7 +125,9 @@ class E91QKD:
             alice_results.append(int(measurement[1]))
             bob_results.append(int(measurement[0]))
         
-        # Generate key from matching bases (a2, b2 both measure in X basis)
+        # Generate key from matching bases: a2 and b1 are both π/4, a3 and b2
+        # are both π/2. These are the only two pairs where Alice and Bob
+        # measured along the same axis.
         raw_key_alice = []
         raw_key_bob = []
         
@@ -134,10 +138,12 @@ class E91QKD:
             alice_b = alice_basis_choices[i]
             bob_b = bob_basis_choices[i]
             
-            # Key generation: when both use compatible bases
-            if alice_b == 'a2' and bob_b == 'b2':
+            # Key generation: when both measured along the same axis
+            if (alice_b, bob_b) in (('a2', 'b1'), ('a3', 'b2')):
                 raw_key_alice.append(alice_results[i])
-                raw_key_bob.append(bob_results[i])
+                # Singlet outcomes are perfectly anti-correlated, so Bob flips
+                # his bit to agree with Alice
+                raw_key_bob.append(bob_results[i] ^ 1)
             
             # CHSH test measurements
             if alice_b == 'a1' and bob_b == 'b1':

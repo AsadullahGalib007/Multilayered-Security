@@ -25,16 +25,28 @@ except Exception as e:
 # Test 2: E91 QKD Protocol
 print("\n[Test 2] Testing E91 QKD Protocol...")
 try:
-    qkd = E91QKD(num_singlets=50)
+    # 250 singlets: 50 leaves only ~5 samples per CHSH correlation term, which
+    # is too noisy to distinguish a real violation from sampling error.
+    qkd = E91QKD(num_singlets=250)
     alice_key, bob_key, chsh_value, time_taken = qkd.run_protocol()
-    
+
     print(f"  Key length: {len(alice_key)} bits")
     print(f"  CHSH value: {chsh_value:.4f}")
     print(f"  Keys match: {alice_key == bob_key}")
-    
-    if abs(chsh_value) > 2:
-        print("  ✓ CHSH inequality violated - Quantum correlation confirmed")
-    
+
+    assert len(alice_key) > 0, "E91 produced an empty key"
+    assert alice_key == bob_key, (
+        "Alice and Bob do not share the same key - sifting or the entangled "
+        "state is wrong, so there is no shared secret"
+    )
+    print("  ✓ Alice and Bob hold an identical key")
+
+    assert abs(chsh_value) > 2, (
+        f"CHSH = {chsh_value:.4f}, expected |CHSH| > 2 (ideal -2.828). "
+        "Without a violation the eavesdropper test is meaningless"
+    )
+    print("  ✓ CHSH inequality violated - Quantum correlation confirmed")
+
     print("✓ E91 QKD test passed")
 except Exception as e:
     print(f"✗ E91 QKD test failed: {e}")
