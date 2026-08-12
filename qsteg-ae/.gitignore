@@ -1,0 +1,17 @@
+__pycache__/
+*.py[cod]
+.venv/
+.uv/
+results/**
+!results/**/manifest.json
+data/**
+!data/README.md
+docs/paper/*.aux
+docs/paper/*.log
+docs/paper/*.out
+*.pt
+*.pth
+*.ckpt
+.ipynb_checkpoints/
+.pytest_cache/
+.ruff_cache/
