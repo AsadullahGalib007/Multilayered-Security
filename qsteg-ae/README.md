@@ -35,9 +35,13 @@ OpenSSL headers this machine does not have. The script builds liboqs with
 `-DOQS_USE_OPENSSL=OFF` instead. It is idempotent, so re-running it is free. Full
 story in [`docs/decisions/001-pqc-library.md`](docs/decisions/001-pqc-library.md).
 
-Torch is pinned to **CPU wheels** — no usable GPU on the target machine. See
-[`docs/decisions/000-environment-pins.md`](docs/decisions/000-environment-pins.md),
-which also records why the project stays on the Qiskit 1.x line.
+Torch is pinned to **CPU wheels**. The machine has a GeForce 930MX with a working
+driver, but it was benchmarked and does not earn the swap — 1.35× on the P1.3b
+workload and *slower* than CPU at batch 16, with only 2 GB of VRAM. Measurements and
+the consequences for P4.3 are in
+[`docs/decisions/002-gpu-reevaluation.md`](docs/decisions/002-gpu-reevaluation.md).
+[`docs/decisions/000-environment-pins.md`](docs/decisions/000-environment-pins.md)
+records the remaining pins, including why the project stays on the Qiskit 1.x line.
 
 ## Running experiments
 

@@ -37,14 +37,32 @@ def test_torch_imports() -> None:
     assert (x @ torch.eye(4)).allclose(x)
 
 
-def test_torch_is_cpu_only_build() -> None:
-    """Documents the machine, not a requirement. Fails loudly if the pin changes."""
+def test_torch_build_is_coherent_with_hardware() -> None:
+    """The CPU pin is a measured choice, not a hardware limitation — see decision 002.
+
+    Asserts the build and the machine agree, rather than hardcoding CPU. A CUDA wheel
+    that cannot reach a usable device is a broken environment and must fail here, not
+    three phases later inside a training run.
+    """
     import torch
 
-    assert "+cpu" in torch.__version__, (
-        "pyproject pins CPU wheels via [tool.uv.sources]; a CUDA build here means the "
-        "lock drifted. Update docs/decisions/ if this was deliberate."
-    )
+    if "+cu" in torch.__version__:
+        # Deliberate swap (decision 002 documents how). Verify it actually works.
+        assert torch.cuda.is_available(), (
+            f"torch {torch.__version__} is a CUDA build but no device is reachable — "
+            "check the driver before trusting any number produced on this env"
+        )
+        capability = torch.cuda.get_device_capability(0)
+        assert f"sm_{capability[0]}{capability[1]}" in torch.cuda.get_arch_list(), (
+            f"torch {torch.__version__} ships {torch.cuda.get_arch_list()} but this "
+            f"device is sm_{capability[0]}{capability[1]}; kernels will fail at launch. "
+            "Maxwell (sm_50) needs the cu118 wheels — see docs/decisions/002."
+        )
+    else:
+        assert "+cpu" in torch.__version__, (
+            "pyproject pins CPU wheels via [tool.uv.sources]; an unrecognised build "
+            "here means the lock drifted. Update docs/decisions/ if this was deliberate."
+        )
 
 
 def test_liboqs_available() -> None:

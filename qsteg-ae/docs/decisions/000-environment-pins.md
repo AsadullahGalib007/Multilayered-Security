@@ -34,6 +34,12 @@ across the 2.0 boundary.
 
 ### Torch 2.6.0 **CPU wheels**
 
+> **Superseded rationale — see [`002-gpu-reevaluation.md`](002-gpu-reevaluation.md).**
+> The driver was installed on 2026-08-12 and the choice was re-measured. **The pin is
+> unchanged**, but it now rests on a benchmark (1.35× on the P1.3b shape, *0.55×* at
+> batch 16) rather than on the absence of a driver. The paragraph below records the
+> original reasoning as of the first P0.1 pass.
+
 `nvidia-smi` fails on this machine: a GeForce 930MX (GM108M) is present but no driver
 is loaded, and the active display adapter is Intel HD 620. CUDA wheels would add
 ~2.5 GB for no benefit, so `[tool.uv.sources]` points torch and torchvision at
@@ -46,6 +52,10 @@ particular is not realistically trainable here. Options are the fallback path al
 in the plan (`create_simple_stego` for P1), fixing the NVIDIA driver, or renting a
 GPU. Flagged to the owner at the end of P0.1; needs a decision before P4, not before
 P1.
+
+**Update (decision 002):** the driver has since been fixed and it was *not* enough —
+the card is 2 GB and compute capability 5.0. P1.3b is fine on CPU either way; **P4.3
+remains blocked** and now needs a rented GPU or a reduced-scale protocol.
 
 ### NumPy pinned to 1.26.4 (not 2.x)
 
