@@ -1,0 +1,97 @@
+[project]
+name = "qsteg-ae"
+version = "0.1.0"
+description = "QSTEG-AE: entropy-accounted hybrid quantum-classical covert channel"
+readme = "README.md"
+requires-python = ">=3.11,<3.13"
+license = { text = "MIT" }
+authors = [{ name = "Asadullah", email = "abrgalib@gmail.com" }]
+
+dependencies = [
+    # --- quantum ---
+    "qiskit==1.4.2",
+    "qiskit-aer==0.15.1",
+    # --- cryptography (vetted libraries only; CLAUDE.md invariant 3) ---
+    "cryptography==44.0.2",
+    "pycryptodome==3.21.0",
+    # --- post-quantum KEM (P3.1). liboqs-python builds liboqs natively on first
+    #     import; pqcrypto is the documented fallback (docs/decisions/001-pqc-library.md)
+    "liboqs-python==0.16.0",
+    # --- deep learning (CPU wheels; see [tool.uv.sources]) ---
+    "torch==2.6.0",
+    "torchvision==0.21.0",
+    # --- numerics / imaging ---
+    "numpy==1.26.4",
+    "scipy==1.15.2",
+    "scikit-image==0.25.2",
+    "pillow==11.1.0",
+    "piq==0.8.0",
+    # --- data artifacts (experiment protocol: .parquet / .npz) ---
+    "pandas==2.2.3",
+    "pyarrow==19.0.1",
+    # --- figures ---
+    "matplotlib==3.10.1",
+    # --- misc ---
+    "tqdm==4.67.1",
+]
+
+[project.optional-dependencies]
+# Fallback PQC path if liboqs-python cannot build on a given machine.
+pqc-fallback = ["pqcrypto==0.4.0"]
+
+[dependency-groups]
+dev = [
+    "pytest==8.3.5",
+    "pytest-cov==6.0.0",
+    "ruff==0.11.2",
+    "black==25.1.0",
+]
+
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"
+
+[tool.hatch.build.targets.wheel]
+packages = ["src"]
+
+# No CUDA driver on the target machine (Intel HD 620 + unloaded GM108M).
+# CPU wheels keep the env ~2.5 GB smaller. Swap the index to switch to CUDA.
+[tool.uv.sources]
+torch = [{ index = "pytorch-cpu" }]
+torchvision = [{ index = "pytorch-cpu" }]
+
+[[tool.uv.index]]
+name = "pytorch-cpu"
+url = "https://download.pytorch.org/whl/cpu"
+explicit = true
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+addopts = "-q --strict-markers"
+markers = [
+    "slow: takes more than ~10 s; excluded from the CI smoke run",
+]
+# Warnings are errors so that a silent API drift under us is a test failure.
+# Each exemption below is upstream noise we cannot fix; see docs/decisions/000.
+filterwarnings = [
+    "error",
+    # matplotlib 3.10 still calls pyparsing's pre-3.3 camelCase API.
+    "ignore::DeprecationWarning:matplotlib.*",
+    "ignore:.*deprecated - use.*:DeprecationWarning",
+    # qiskit-aer 0.15.1's transpile path uses several qiskit 1.3-deprecated
+    # internals (DAGCircuit.duration, Instruction.condition, ...). Ours calls none
+    # of them directly; we stay on qiskit 1.x deliberately (decision 000).
+    "ignore:.*deprecated as of qiskit.*:DeprecationWarning",
+]
+
+[tool.ruff]
+line-length = 100
+target-version = "py311"
+
+[tool.ruff.lint]
+select = ["E", "F", "I", "UP", "B", "SIM", "NPY"]
+ignore = ["E501"]  # black owns line length
+
+[tool.black]
+line-length = 100
+target-version = ["py311"]
