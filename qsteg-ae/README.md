@@ -19,9 +19,11 @@ Requires [`uv`](https://docs.astral.sh/uv/), Python 3.11–3.12, and a C toolcha
 ```bash
 ./scripts/bootstrap_liboqs.sh   # build native liboqs — REQUIRED, and not in uv.lock
 uv sync --all-groups            # create .venv from uv.lock
-uv run pytest                   # test suite
-uv run ruff check . && uv run black --check .
+./scripts/check.sh              # ruff + black + pytest + smoke experiments
 ```
+
+`scripts/check.sh` is exactly what CI runs (`.github/workflows/qsteg-ae.yml` calls it),
+so local green and CI green cannot drift apart.
 
 Environment sanity check (must pass before any phase work):
 
@@ -48,12 +50,23 @@ records the remaining pins, including why the project stays on the Qiskit 1.x li
 One script per experiment ID, re-runnable with a single command:
 
 ```bash
-uv run python -m experiments.<experiment_id> --seed 20240816 --out results/<experiment_id>
+uv run python -m experiments.<experiment_id>              # defaults: fixed seed, results/<id>/
+uv run python -m experiments.<experiment_id> --smoke      # fast reduced-scale run
+uv run python -m experiments.<experiment_id> --seed 7 --out results/scratch
 ```
 
-Every run writes `results/<id>/manifest.json` (git SHA, seed, params, package
-versions, wall time, hostname) plus raw data as `.parquet`/`.npz`. `results/` is
-gitignored except for manifests.
+Every run writes `results/<id>/manifest.json` (git SHA + dirty flag, seed, params,
+package versions, wall time, hostname) plus raw data as `.parquet`/`.npz`. `results/`
+is gitignored except for manifests. A run that *crashes* still writes a manifest marked
+`"status": "failed"` — a failed run must leave a trace.
+
+**Start a new experiment by copying `experiments/_template.py`**, which is the
+reference implementation of the protocol; `experiments/_harness.py` supplies the seed
+handling, manifest, and `--smoke`/`--seed`/`--out` flags, so no experiment reimplements
+them. Figures go through `src/viz/style.py` — never inline matplotlib config. The
+palette is validated colorblind-safe; see
+[`docs/decisions/003-figure-style.md`](docs/decisions/003-figure-style.md) before
+changing a color.
 
 ## Layout
 
