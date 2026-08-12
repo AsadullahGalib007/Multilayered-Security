@@ -18,3 +18,7 @@ peppers_512x512.png
 revealed_secret.png
 rocket_512x512.png
 stego_image.png
+# QSTEG-AE moved to its own repo: git@github.com:AsadullahGalib007/qsteg-ae.git
+# Clone it as a sibling of this directory, not inside it. Kept out of this repo so the
+# same files never live in two places and drift.
+qsteg-ae/
